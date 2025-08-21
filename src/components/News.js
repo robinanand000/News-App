@@ -3,7 +3,8 @@ import NewsItem from "./NewsItem";
 import Spinner from "./Spinner";
 import "./News.css";
 
-const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+const capitalizeFirstLetter = (str) =>
+  str.charAt(0).toUpperCase() + str.slice(1);
 
 const News = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +49,8 @@ const News = (props) => {
 
       <div className="row">
         {!isLoading &&
+          articles &&
+          articles.length > 0 &&
           articles.map((element) => (
             <div className="col-md-4" key={element.url}>
               <NewsItem
@@ -65,7 +68,11 @@ const News = (props) => {
 
       {!isLoading && (
         <div className="container d-flex justify-content-evenly my-4">
-          <button disabled={pageNo <= 1} className="btn btn-dark" onClick={handlePrevClick}>
+          <button
+            disabled={pageNo <= 1}
+            className="btn btn-dark"
+            onClick={handlePrevClick}
+          >
             &larr; Prev
           </button>
           <button
