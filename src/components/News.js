@@ -1,82 +1,100 @@
-import React, { Component } from 'react'
-import NewsItem from './NewsItem'
-import PropTypes from 'prop-types'
-import Spinner from './Spinner';
+import React, { useCallback, useEffect, useState } from "react";
+import NewsItem from "./NewsItem";
+import Spinner from "./Spinner";
+import "./News.css";
 
-export class News extends Component {
+const capitalizeFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
-  static defaultProps={
-    country:'in',
-    pageSize:9,
-    category:"general",
-  }
-  static propTypes={
-    country: PropTypes.string,
-    pageSize: PropTypes.number,
-    category: PropTypes.string,
-  }
+const News = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [articles, setArticles] = useState([]);
+  const [pageNo, setPageNo] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
+  const apiKey = "7001c25c2e1344f19bc026e8e71b1dfe";
 
-  capitalizeFirstLetter=(str)=>{
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
+  useEffect(() => {
+    document.title = `${capitalizeFirstLetter(props.category)} - NewsApp`;
+  }, [props.category]);
 
-  constructor(props){
-    super(props);
-    this.state={
-      articles:[],
-      loading: false,
-      page:1
-    }
-    document.title= `${this.capitalizeFirstLetter(this.props.category)} -NewsMonkey`;
-  }
-  
-async updateNews(){
-  let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=063a20a3197648538a1302df80bca019&page=${this.state.page}&pageSize=${this.props.pageSize}`;
-    this.setState({loading:true})
-    let data= await fetch(url);
-    let parsedData=await data.json();
+  const updateNews = useCallback(async () => {
+    let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${apiKey}&page=${pageNo}&pageSize=${props.pageSize}`;
+
+    setIsLoading(true);
+
+    let data = await fetch(url);
+    let parsedData = await data.json();
     console.log(parsedData);
-    this.setState({
-      articles:parsedData.articles,
-      totalResults:parsedData.totalResults,
-      loading:false,
-    })
-}
- async  componentDidMount(){
-  this.updateNews();
-  }
 
-  handleNextClick= async()=>{
-    this.setState({page:this.state.page+1})
-    this.updateNews();
-  }
+    setArticles(parsedData.articles);
+    setTotalResults(parsedData.totalResults);
+    setIsLoading(false);
+  }, [props.country, props.category, pageNo, props.pageSize]);
 
-  handlePrevClick= async()=>{
-    this.setState({page:this.state.page-1})
-    this.updateNews();
-  }
+  useEffect(() => {
+    updateNews();
+  }, [updateNews]);
 
-  render() {
-    return (
-      <div className='container my-3'>
-          <h2>Top Headlines - {this.capitalizeFirstLetter(this.props.category)}</h2>
-          {this.state.loading &&<Spinner/>}
+  const handleNextClick = () => {
+    setPageNo((page) => page + 1);
+  };
 
-          <div className="row ">
-            {!this.state.loading && this.state.articles.map((element)=>{
-              return <div className="col-md-4" key={element.url}>
-              <NewsItem date={element.publishedAt} title={element.title?element.title:""} description={element.description?element.description:""} imageUrl={element.urlToImage} newsUrl={element.url} author={element.author} source={element.source.name}/>
-              </div>
-            })}
-          </div>
+  const handlePrevClick = () => {
+    setPageNo((page) => page - 1);
+  };
 
-          {!this.state.loading &&<div className="container d-flex justify-content-evenly my-4">
-              <button disabled={this.state.page<=1} type="button" className="btn btn-dark" onClick={this.handlePrevClick}>&larr; Prev</button>
-              <button disabled={this.state.page+1 > Math.ceil(this.state.totalResults/this.props.pageSize)} type="button" className="btn btn-dark" onClick={this.handleNextClick}>Next &rarr;</button>
-          </div>}
+  return (
+    <div className="container my-3">
+      <div className="news-header">
+        <h2>Top Headlines - {capitalizeFirstLetter(props.category)}</h2>
+        <button className="btn btn-dark" onClick={updateNews}>
+          Refresh
+        </button>
       </div>
-    )
-  }
-}
+      {isLoading && <Spinner />}
 
-export default News
+      <div className="row ">
+        {!isLoading &&
+          articles.map((element) => {
+            return (
+              <div className="col-md-4" key={element.url}>
+                <NewsItem
+                  date={element.publishedAt}
+                  title={element.title ? element.title : ""}
+                  description={element.description ? element.description : ""}
+                  imageUrl={element.urlToImage}
+                  newsUrl={element.url}
+                  author={element.author}
+                  source={element.source.name}
+                />
+              </div>
+            );
+          })}
+      </div>
+
+      {!isLoading && (
+        <div className="container d-flex justify-content-evenly my-4">
+          <button
+            disabled={pageNo <= 1}
+            type="button"
+            className="btn btn-dark"
+            onClick={handlePrevClick}
+          >
+            &larr; Prev
+          </button>
+          <button
+            disabled={pageNo + 1 > Math.ceil(totalResults / props.pageSize)}
+            type="button"
+            className="btn btn-dark"
+            onClick={handleNextClick}
+          >
+            Next &rarr;
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default News;
