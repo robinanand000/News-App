@@ -12,7 +12,7 @@ const News = (props) => {
   const [articles, setArticles] = useState([]);
   const [pageNo, setPageNo] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-  const apiKey = "7001c25c2e1344f19bc026e8e71b1dfe";
+  const apiKey = process.env.REACT_APP_NEWS_API_KEY;
 
   useEffect(() => {
     document.title = `${capitalizeFirstLetter(props.category)} - NewsApp`;
@@ -30,7 +30,7 @@ const News = (props) => {
     setArticles(parsedData.articles);
     setTotalResults(parsedData.totalResults);
     setIsLoading(false);
-  }, [props.country, props.category, pageNo, props.pageSize]);
+  }, [props.country, props.category, pageNo, props.pageSize, apiKey]);
 
   useEffect(() => {
     updateNews();
