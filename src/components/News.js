@@ -12,18 +12,13 @@ const News = (props) => {
   const [pageNo, setPageNo] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
 
-  useEffect(() => {
-    document.title = `${capitalizeFirstLetter(props.category)} - NewsApp`;
-  }, [props.category]);
-
   const updateNews = useCallback(async () => {
     setIsLoading(true);
 
-    // Call your Netlify function instead of NewsAPI directly
-    const res = await fetch(
-      `/.netlify/functions/newsFunction?country=${props.country}&category=${props.category}&page=${pageNo}&pageSize=${props.pageSize}`
-    );
-    const parsedData = await res.json();
+    const url = `/.netlify/functions/newsFunction?country=${props.country}&category=${props.category}&page=${pageNo}&pageSize=${props.pageSize}`;
+
+    const data = await fetch(url);
+    const parsedData = await data.json();
 
     setArticles(parsedData.articles);
     setTotalResults(parsedData.totalResults);
@@ -31,8 +26,9 @@ const News = (props) => {
   }, [props.country, props.category, pageNo, props.pageSize]);
 
   useEffect(() => {
+    document.title = `${capitalizeFirstLetter(props.category)} - NewsApp`;
     updateNews();
-  }, [updateNews]);
+  }, [props.category, updateNews]);
 
   const handleNextClick = () => setPageNo((page) => page + 1);
   const handlePrevClick = () => setPageNo((page) => page - 1);
@@ -49,8 +45,6 @@ const News = (props) => {
 
       <div className="row">
         {!isLoading &&
-          articles &&
-          articles.length > 0 &&
           articles.map((element) => (
             <div className="col-md-4" key={element.url}>
               <NewsItem

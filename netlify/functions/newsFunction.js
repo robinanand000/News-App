@@ -1,14 +1,15 @@
+// netlify/functions/newsFunction.js
 import fetch from "node-fetch";
 
 export async function handler(event, context) {
   const {
-    category = "general",
     country = "us",
+    category = "general",
     page = 1,
     pageSize = 12,
   } = event.queryStringParameters || {};
 
-  const apiKey = process.env.REACT_APP_NEWS_API_KEY;
+  const apiKey = process.env.REACT_APP_NEWS_API_KEY; // Add this in Netlify environment variables
 
   const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&page=${page}&pageSize=${pageSize}&apiKey=${apiKey}`;
 
@@ -17,6 +18,9 @@ export async function handler(event, context) {
 
   return {
     statusCode: 200,
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      articles: data.articles,
+      totalResults: data.totalResults,
+    }),
   };
 }
