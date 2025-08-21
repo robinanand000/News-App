@@ -3,35 +3,46 @@ import NewsItem from "./NewsItem";
 import Spinner from "./Spinner";
 import "./News.css";
 
-const capitalizeFirstLetter = (str) =>
-  str.charAt(0).toUpperCase() + str.slice(1);
+const capitalizeFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
 const News = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [articles, setArticles] = useState([]);
   const [pageNo, setPageNo] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
+  const apiKey = process.env.REACT_APP_NEWS_API_KEY;
+
+  useEffect(() => {
+    document.title = `${capitalizeFirstLetter(props.category)} - NewsApp`;
+  }, [props.category]);
 
   const updateNews = useCallback(async () => {
+    let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${apiKey}&page=${pageNo}&pageSize=${props.pageSize}`;
+
     setIsLoading(true);
 
-    const url = `/.netlify/functions/newsFunction?country=${props.country}&category=${props.category}&page=${pageNo}&pageSize=${props.pageSize}`;
-
-    const data = await fetch(url);
-    const parsedData = await data.json();
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    // console.log(parsedData);
 
     setArticles(parsedData.articles);
     setTotalResults(parsedData.totalResults);
     setIsLoading(false);
-  }, [props.country, props.category, pageNo, props.pageSize]);
+  }, [props.country, props.category, pageNo, props.pageSize, apiKey]);
 
   useEffect(() => {
-    document.title = `${capitalizeFirstLetter(props.category)} - NewsApp`;
     updateNews();
-  }, [props.category, updateNews]);
+  }, [updateNews]);
 
-  const handleNextClick = () => setPageNo((page) => page + 1);
-  const handlePrevClick = () => setPageNo((page) => page - 1);
+  const handleNextClick = () => {
+    setPageNo((page) => page + 1);
+  };
+
+  const handlePrevClick = () => {
+    setPageNo((page) => page - 1);
+  };
 
   return (
     <div className="container my-3">
@@ -43,27 +54,30 @@ const News = (props) => {
       </div>
       {isLoading && <Spinner />}
 
-      <div className="row">
+      <div className="row ">
         {!isLoading &&
-          articles.map((element) => (
-            <div className="col-md-4" key={element.url}>
-              <NewsItem
-                date={element.publishedAt}
-                title={element.title || ""}
-                description={element.description || ""}
-                imageUrl={element.urlToImage}
-                newsUrl={element.url}
-                author={element.author}
-                source={element.source.name}
-              />
-            </div>
-          ))}
+          articles.map((element) => {
+            return (
+              <div className="col-md-4" key={element.url}>
+                <NewsItem
+                  date={element.publishedAt}
+                  title={element.title ? element.title : ""}
+                  description={element.description ? element.description : ""}
+                  imageUrl={element.urlToImage}
+                  newsUrl={element.url}
+                  author={element.author}
+                  source={element.source.name}
+                />
+              </div>
+            );
+          })}
       </div>
 
       {!isLoading && (
         <div className="container d-flex justify-content-evenly my-4">
           <button
             disabled={pageNo <= 1}
+            type="button"
             className="btn btn-dark"
             onClick={handlePrevClick}
           >
@@ -71,6 +85,7 @@ const News = (props) => {
           </button>
           <button
             disabled={pageNo + 1 > Math.ceil(totalResults / props.pageSize)}
+            type="button"
             className="btn btn-dark"
             onClick={handleNextClick}
           >
