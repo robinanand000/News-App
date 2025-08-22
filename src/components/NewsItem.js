@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 
 const NewsItem = (props) => {
-  let { date, title, description, imageUrl, newsUrl, author, source } = props;
+  let { date, title, description, imageUrl, newsUrl, source, content } = props;
+  const [showContent, setShowContent] = useState(false);
+
+  const handleGoToArticle = () => {
+    window.open(newsUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleReadMore = () => {
+    setShowContent((show) => !show);
+  };
+
+  const cleanContent = (text) => {
+    if (!text) return "";
+    return text.replace(/\.\.\.\s*\[\d+\s*chars\]\s*$/, "...");
+  };
 
   return (
     <div>
@@ -13,7 +27,7 @@ const NewsItem = (props) => {
               : imageUrl
           }
           className="card-img-top"
-          alt="..."
+          alt={title}
         />
         <div className="card-body">
           <span
@@ -23,20 +37,26 @@ const NewsItem = (props) => {
             {source}
           </span>
           <h5 className="card-title">{title}</h5>
-          <p className="card-text">{description}</p>
+          <p className="card-text">
+            {showContent ? cleanContent(content) : description}
+          </p>
           <p className="card-text">
             <small className="text-info">
-              By {author ? author : "Unknown"} on {new Date(date).toGMTString()}{" "}
+              On {new Date(date).toGMTString()}{" "}
             </small>
           </p>
-          <a
-            href={newsUrl}
-            rel="noreferrer"
-            target="_blank"
-            className="btn btn-sm btn-dark"
-          >
-            Read More
-          </a>
+
+          <div className="d-flex justify-content-between align-items-center">
+            <button
+              className="btn btn-outline-secondary me-2"
+              onClick={handleReadMore}
+            >
+              {showContent ? "Show Less" : "Read More"}
+            </button>
+            <button className="btn btn-dark" onClick={handleGoToArticle}>
+              Go to Article
+            </button>
+          </div>
         </div>
       </div>
     </div>

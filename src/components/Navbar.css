@@ -1,0 +1,5 @@
+.dropdown-menu {
+  width: 120px !important;
+  min-width: unset !important;
+  text-align: left;
+}

@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 
 const App = () => {
-  const pages = 12;
+  const pages = 15;
   const countryCode = "us";
 
   return (
@@ -35,20 +35,12 @@ const App = () => {
                 category="business"
               />{" "}
             </Route>
-            <Route exact path="/entertainment">
+            <Route exact path="/technology">
               <News
-                key="entertainment"
+                key="technology"
                 pageSize={pages}
                 country={countryCode}
-                category="entertainment"
-              />
-            </Route>
-            <Route exact path="/health">
-              <News
-                key="health"
-                pageSize={pages}
-                country={countryCode}
-                category="health"
+                category="technology"
               />
             </Route>
             <Route exact path="/science">
@@ -59,6 +51,15 @@ const App = () => {
                 category="science"
               />
             </Route>
+            <Route exact path="/health">
+              <News
+                key="health"
+                pageSize={pages}
+                country={countryCode}
+                category="health"
+              />
+            </Route>
+
             <Route exact path="/sports">
               <News
                 key="sports"
@@ -67,13 +68,25 @@ const App = () => {
                 category="sports"
               />
             </Route>
-            <Route exact path="/technology">
+
+            <Route exact path="/entertainment">
               <News
-                key="technology"
+                key="entertainment"
                 pageSize={pages}
                 country={countryCode}
-                category="technology"
+                category="entertainment"
               />
+            </Route>
+            <Route exact path="/nation">
+              <News
+                key="nation"
+                pageSize={pages}
+                country={countryCode}
+                category="nation"
+              />
+            </Route>
+            <Route exact path="/world">
+              <News key="world" pageSize={pages} category="world" />
             </Route>
             <Redirect to="/" />
           </Switch>

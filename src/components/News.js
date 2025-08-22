@@ -11,7 +11,7 @@ const News = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [articles, setArticles] = useState([]);
   const [pageNo, setPageNo] = useState(1);
-  const [totalResults, setTotalResults] = useState(0);
+  const [totalArticles, setTotalArticles] = useState(0);
   const apiKey = process.env.REACT_APP_NEWS_API_KEY;
 
   useEffect(() => {
@@ -19,7 +19,11 @@ const News = (props) => {
   }, [props.category]);
 
   const updateNews = useCallback(async () => {
-    let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${apiKey}&page=${pageNo}&pageSize=${props.pageSize}`;
+    let url = `https://gnews.io/api/v4/top-headlines?category=${
+      props.category
+    }&lang=en${props.country ? `&country=${props.country}` : ""}&max=${
+      props.pageSize
+    }&page=${pageNo}&apikey=${apiKey}`;
 
     setIsLoading(true);
 
@@ -28,7 +32,8 @@ const News = (props) => {
     // console.log(parsedData);
 
     setArticles(parsedData.articles);
-    setTotalResults(parsedData.totalResults);
+    setTotalArticles(parsedData.totalArticles);
+
     setIsLoading(false);
   }, [props.country, props.category, pageNo, props.pageSize, apiKey]);
 
@@ -56,17 +61,17 @@ const News = (props) => {
 
       <div className="row ">
         {!isLoading &&
-          articles.map((element) => {
+          articles.map((article) => {
             return (
-              <div className="col-md-4" key={element.url}>
+              <div className="col-md-4" key={article.url}>
                 <NewsItem
-                  date={element.publishedAt}
-                  title={element.title ? element.title : ""}
-                  description={element.description ? element.description : ""}
-                  imageUrl={element.urlToImage}
-                  newsUrl={element.url}
-                  author={element.author}
-                  source={element.source.name}
+                  date={article.publishedAt}
+                  title={article.title ? article.title : ""}
+                  description={article.description ? article.description : ""}
+                  imageUrl={article.image}
+                  newsUrl={article.url}
+                  source={article.source.name}
+                  content={article.content}
                 />
               </div>
             );
@@ -84,7 +89,7 @@ const News = (props) => {
             &larr; Prev
           </button>
           <button
-            disabled={pageNo + 1 > Math.ceil(totalResults / props.pageSize)}
+            disabled={pageNo + 1 > Math.ceil(totalArticles / props.pageSize)}
             type="button"
             className="btn btn-dark"
             onClick={handleNextClick}
