@@ -19,13 +19,22 @@ const News = (props) => {
   }, [props.category]);
 
   const updateNews = useCallback(async () => {
-    let url = `https://gnews.io/api/v4/top-headlines?category=${
-      props.category
-    }&lang=en${props.country ? `&country=${props.country}` : ""}&max=${
-      props.pageSize
-    }&page=${pageNo}&apikey=${apiKey}`;
-
     setIsLoading(true);
+
+    let url = "";
+    if (props.query && props.query.trim() !== "") {
+      url = `https://gnews.io/api/v4/search?q=${props.query}&category=${
+        props.category
+      }&lang=${props.languageCode}${
+        props.countryCode ? `&country=${props.countryCode}` : ""
+      }&max=${props.pageSize}&page=${pageNo}&apikey=${apiKey}`;
+    } else {
+      url = `https://gnews.io/api/v4/top-headlines?category=${
+        props.category
+      }&lang=${props.languageCode}${
+        props.countryCode ? `&country=${props.countryCode}` : ""
+      }&max=${props.pageSize}&page=${pageNo}&apikey=${apiKey}`;
+    }
 
     let data = await fetch(url);
     let parsedData = await data.json();
@@ -35,7 +44,15 @@ const News = (props) => {
     setTotalArticles(parsedData.totalArticles);
 
     setIsLoading(false);
-  }, [props.country, props.category, pageNo, props.pageSize, apiKey]);
+  }, [
+    props.countryCode,
+    props.category,
+    pageNo,
+    props.pageSize,
+    props.languageCode,
+    props.query,
+    apiKey,
+  ]);
 
   useEffect(() => {
     updateNews();
@@ -52,7 +69,13 @@ const News = (props) => {
   return (
     <div className="container my-3">
       <div className="news-header">
-        <h2>Top Headlines - {capitalizeFirstLetter(props.category)}</h2>
+        {props.query ? (
+          <h2>
+            Total Articles Found: <strong>{articles.length}</strong>
+          </h2>
+        ) : (
+          <h2>Top Headlines - {capitalizeFirstLetter(props.category)}</h2>
+        )}
         <button className="btn btn-dark" onClick={updateNews}>
           Refresh
         </button>

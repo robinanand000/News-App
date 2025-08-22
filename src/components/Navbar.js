@@ -2,36 +2,55 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./Navbar.css";
 
-const Navbar = () => {
-  const [country, setCountry] = useState("Country");
+const Navbar = (props) => {
+  const { countryName, language, onCountryChange, onLanguageChange, onSearch } =
+    props;
   const [searchTerm, setSearchTerm] = useState("");
-  const [language, setLanguage] = useState("Lang");
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-  };
 
   const countries = [
-    { name: "World", code: "" },
-    { name: "USA", code: "us" },
     { name: "India", code: "in" },
+    { name: "USA", code: "us" },
     { name: "UK", code: "gb" },
-    { name: "Australia", code: "au" },
+    // { name: "Canada", code: "ca" },
+    // { name: "Russia", code: "ru" },
+    // { name: "Japan", code: "jp" },
+    // { name: "China", code: "cn" },
+    // { name: "Australia", code: "au" },
   ];
 
   const languages = [
     { name: "English", code: "en" },
-    { name: "Spanish", code: "es" },
-    { name: "French", code: "fr" },
-    { name: "German", code: "de" },
+    { name: "Hindi", code: "hi" },
+    // { name: "Russian", code: "ru" },
+    // { name: "Japanese", code: "ja" },
+    // { name: "Chinese", code: "zh" },
+    // { name: "Spanish", code: "es" },
+    // { name: "Italian", code: "it" },
+    // { name: "Greek", code: "el" },
   ];
+
+  const hanldeCountry = (code, name) => {
+    onCountryChange(code, name);
+  };
+  const hanldeLanguage = (code, name) => {
+    onLanguageChange(code, name);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    onSearch(searchTerm);
+    setSearchTerm("");
+  };
 
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid">
           <NavLink className="navbar-brand" to="/">
-            NewsApp
+            NewsRush
           </NavLink>
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -87,7 +106,7 @@ const Navbar = () => {
             {/* Right controls */}
             <div className="d-flex align-items-center me-3 ms-auto">
               {/* Country Dropdown */}
-              <div className="d-flex align-items-center gap-2">
+              <div className="d-flex align-items-center gap-3">
                 <div className="dropdown">
                   <button
                     className="btn btn-outline-light btn-sm dropdown-toggle"
@@ -96,17 +115,17 @@ const Navbar = () => {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    {country}
+                    {countryName}
                   </button>
                   <ul
                     className="dropdown-menu"
                     aria-labelledby="countryDropdown"
                   >
                     {countries.map((c) => (
-                      <li key={c.code}>
+                      <li key={`country-${c.code}`}>
                         <button
                           className="dropdown-item"
-                          onClick={() => setCountry(c.name)}
+                          onClick={() => hanldeCountry(c.code, c.name)}
                         >
                           {c.name}
                         </button>
@@ -131,10 +150,10 @@ const Navbar = () => {
                     aria-labelledby="languageDropdown"
                   >
                     {languages.map((l) => (
-                      <li key={l.code}>
+                      <li key={`language-${l.code}`}>
                         <button
                           className="dropdown-item"
-                          onClick={() => setLanguage(l.name)}
+                          onClick={() => hanldeLanguage(l.code, l.name)}
                         >
                           {l.name}
                         </button>
@@ -154,7 +173,7 @@ const Navbar = () => {
                   type="search"
                   placeholder="Search..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearch}
                   style={{ width: "240px" }}
                 />
               </form>
