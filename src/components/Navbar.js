@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./Navbar.css";
+import NewsContext from "../context/NewsContext";
 
 const Navbar = (props) => {
-  const { countryName, language, onCountryChange, onLanguageChange, onSearch } =
-    props;
+  const { country, language, onCountryChange, onLanguageChange, onSearch } =
+    useContext(NewsContext);
   const [searchTerm, setSearchTerm] = useState("");
 
   const countries = [
@@ -61,6 +62,11 @@ const Navbar = (props) => {
                 </NavLink>
               </li>
               <li className="nav-item">
+                <NavLink className="nav-link" to="/sports">
+                  Sports
+                </NavLink>
+              </li>
+              <li className="nav-item">
                 <NavLink className="nav-link" to="/business">
                   Business
                 </NavLink>
@@ -75,25 +81,14 @@ const Navbar = (props) => {
                   Science
                 </NavLink>
               </li>
-
               <li className="nav-item">
                 <NavLink className="nav-link" to="/health">
                   Health
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/sports">
-                  Sports
-                </NavLink>
-              </li>
-              <li className="nav-item">
                 <NavLink className="nav-link" to="/entertainment">
                   Entertainment
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/nation">
-                  Nation
                 </NavLink>
               </li>
               <li className="nav-item">
@@ -115,7 +110,7 @@ const Navbar = (props) => {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    {countryName}
+                    {country}
                   </button>
                   <ul
                     className="dropdown-menu"
