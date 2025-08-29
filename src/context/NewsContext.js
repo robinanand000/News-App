@@ -20,9 +20,6 @@ export const NewsContextProvider = ({ children }) => {
     setLanguageCode(code);
     setLanguage(lang);
   };
-  const onSearchHandler = (q) => {
-    setQuery(q);
-  };
 
   return (
     <NewsContext.Provider
@@ -33,9 +30,9 @@ export const NewsContextProvider = ({ children }) => {
         languageCode,
         language,
         query,
+        setQuery,
         onCountryChange,
         onLanguageChange,
-        onSearchHandler,
       }}
     >
       {children}

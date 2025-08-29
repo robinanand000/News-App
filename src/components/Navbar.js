@@ -4,7 +4,7 @@ import "./Navbar.css";
 import NewsContext from "../context/NewsContext";
 
 const Navbar = (props) => {
-  const { country, language, onCountryChange, onLanguageChange, onSearch } =
+  const { country, language, onCountryChange, onLanguageChange, setQuery } =
     useContext(NewsContext);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -12,22 +12,22 @@ const Navbar = (props) => {
     { name: "India", code: "in" },
     { name: "USA", code: "us" },
     { name: "UK", code: "gb" },
-    // { name: "Canada", code: "ca" },
-    // { name: "Russia", code: "ru" },
-    // { name: "Japan", code: "jp" },
-    // { name: "China", code: "cn" },
-    // { name: "Australia", code: "au" },
+    { name: "Canada", code: "ca" },
+    { name: "Russia", code: "ru" },
+    { name: "Japan", code: "jp" },
+    { name: "China", code: "cn" },
+    { name: "Australia", code: "au" },
   ];
 
   const languages = [
     { name: "English", code: "en" },
     { name: "Hindi", code: "hi" },
-    // { name: "Russian", code: "ru" },
-    // { name: "Japanese", code: "ja" },
-    // { name: "Chinese", code: "zh" },
-    // { name: "Spanish", code: "es" },
-    // { name: "Italian", code: "it" },
-    // { name: "Greek", code: "el" },
+    { name: "Russian", code: "ru" },
+    { name: "Japanese", code: "ja" },
+    { name: "Chinese", code: "zh" },
+    { name: "Spanish", code: "es" },
+    { name: "Italian", code: "it" },
+    { name: "Greek", code: "el" },
   ];
 
   const hanldeCountry = (code, name) => {
@@ -42,7 +42,7 @@ const Navbar = (props) => {
   };
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    onSearch(searchTerm);
+    setQuery(searchTerm);
     setSearchTerm("");
   };
 
